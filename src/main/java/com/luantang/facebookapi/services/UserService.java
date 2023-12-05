@@ -7,6 +7,7 @@ import com.luantang.facebookapi.models.UserEntity;
 
 public interface UserService {
     UserResponse getUsers(int pageNo, int pageSize);
+    UserDto getCurrentUser();
     UserDto getUserByEmail(String email);
     UserDto getUserById(String userId);
     UserDto createUser(UserEntity user);

@@ -6,6 +6,8 @@ import java.util.UUID;
 public class CommentDto {
     private UUID commentId;
     private String userId;
+    private String userName;
+    private String imageURL;
     private UUID postId;
     private String comment;
     private Date timeSummit;
@@ -13,9 +15,11 @@ public class CommentDto {
     public CommentDto() {
     }
 
-    public CommentDto(UUID commentId, String userId, UUID postId, String comment, Date timeSummit) {
+    public CommentDto(UUID commentId, String userId, String userName, String imageURL, UUID postId, String comment, Date timeSummit) {
         this.commentId = commentId;
         this.userId = userId;
+        this.userName = userName;
+        this.imageURL = imageURL;
         this.postId = postId;
         this.comment = comment;
         this.timeSummit = timeSummit;
@@ -35,6 +39,22 @@ public class CommentDto {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
     }
 
     public UUID getPostId() {

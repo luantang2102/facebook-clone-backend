@@ -2,14 +2,17 @@ package com.luantang.facebookapi.dto;
 
 public class AuthResponseDto {
     private String accessToken;
+    private UserDto currentUser;
     private String tokenType = "Bearer ";
 
-    public AuthResponseDto(String accessToken) {
+    public AuthResponseDto(String accessToken, UserDto currentUser) {
         this.accessToken = accessToken;
+        this.currentUser = currentUser;
     }
 
-    public AuthResponseDto(String accessToken, String tokenType) {
+    public AuthResponseDto(String accessToken, UserDto currentUser, String tokenType) {
         this.accessToken = accessToken;
+        this.currentUser = currentUser;
         this.tokenType = tokenType;
     }
 
@@ -27,5 +30,13 @@ public class AuthResponseDto {
 
     public void setTokenType(String tokenType) {
         this.tokenType = tokenType;
+    }
+
+    public UserDto getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(UserDto currentUser) {
+        this.currentUser = currentUser;
     }
 }

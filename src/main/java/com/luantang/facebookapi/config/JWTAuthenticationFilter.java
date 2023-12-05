@@ -29,9 +29,6 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
-    @Autowired
-    private UserService userService;
-
     Claims claims = null;
 
     @Override
@@ -44,13 +41,12 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String userId = jwtService.extractUserId(token);
-        claims = jwtService.extractAllClaims(token);
-
-        customUserDetailsService.loadUserByUsername(userService.getUserById(userId).getEmail());
-        UserEntity user = customUserDetailsService.getUserDetails();
         if(StringUtils.hasText(token)
-                && jwtService.validateToken(token, user)) {
+                && jwtService.validateToken(token)) {
+            String userId = jwtService.extractUserId(token);
+            claims = jwtService.extractAllClaims(token);
+            customUserDetailsService.loadUserById(userId);
+            UserEntity user = customUserDetailsService.getUserDetails();
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContext securityContext = SecurityContextHolder.createEmptyContext();

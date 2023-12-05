@@ -1,14 +1,18 @@
 package com.luantang.facebookapi.services.impl;
 
 import com.luantang.facebookapi.dto.CommentDto;
+import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.dto.response.CommentResponse;
 import com.luantang.facebookapi.models.Comment;
+import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.repositories.CommentRepository;
 import com.luantang.facebookapi.services.CommentService;
+import com.luantang.facebookapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -20,16 +24,21 @@ import java.util.stream.Collectors;
 public class CommentServiceImpl implements CommentService {
 
     private final CommentRepository commentRepository;
+    private final UserService userService;
 
     @Autowired
-    public CommentServiceImpl(CommentRepository commentRepository) {
+    public CommentServiceImpl(CommentRepository commentRepository, UserService userService) {
         this.commentRepository = commentRepository;
+        this.userService = userService;
     }
 
     @Override
     public CommentDto createComment(CommentDto commentDto) {
         commentDto.setCommentId(UUID.randomUUID());
         commentDto.setTimeSummit(new Date());
+        commentDto.setUserId(getCurrentUser().getUserId());
+        commentDto.setImageURL(getCurrentUser().getUserImage());
+
         Comment comment = mapToEntity(commentDto);
 
         Comment newComment = commentRepository.save(comment);
@@ -70,10 +79,16 @@ public class CommentServiceImpl implements CommentService {
         CommentDto commentDto = new CommentDto();
         commentDto.setCommentId(comment.getCommentId());
         commentDto.setUserId(comment.getUserId());
+        UserDto user = userService.getUserById(comment.getUserId());
+        commentDto.setUserName(user.getUserName());
+        commentDto.setImageURL(user.getUserImage());
         commentDto.setPostId(comment.getPostId());
         commentDto.setComment(comment.getComment());
         commentDto.setTimeSummit(comment.getTimeSummit());
         return commentDto;
     }
 
+    public UserEntity getCurrentUser() {
+        return (UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
 }

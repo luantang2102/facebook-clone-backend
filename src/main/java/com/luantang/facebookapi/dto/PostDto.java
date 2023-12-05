@@ -5,6 +5,7 @@ import java.util.UUID;
 
 public class PostDto {
     private UUID postId;
+    private String userId;
     private String userName;
     private String imageURL;
     private String description;
@@ -15,8 +16,9 @@ public class PostDto {
     public PostDto() {
     }
 
-    public PostDto(UUID postId, String userName, String imageURL, String description, String postImgURL, int likes, Date dateTime) {
+    public PostDto(UUID postId, String userId, String userName, String imageURL, String description, String postImgURL, int likes, Date dateTime) {
         this.postId = postId;
+        this.userId = userId;
         this.userName = userName;
         this.imageURL = imageURL;
         this.description = description;
@@ -31,6 +33,14 @@ public class PostDto {
 
     public void setPostId(UUID postId) {
         this.postId = postId;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getUserName() {

@@ -11,8 +11,6 @@ public class Post {
     @Id
     private UUID postId;
     private String userId;
-    private String userName;
-    private String imageURL;
     private String description;
     private String postImgURL;
     private int likes;
@@ -22,19 +20,9 @@ public class Post {
 
     }
 
-    public Post(String userId, String userName, String imageURL, String description, String postImgURL) {
-        this.userId = userId;
-        this.userName = userName;
-        this.imageURL = imageURL;
-        this.description = description;
-        this.postImgURL = postImgURL;
-    }
-
-    public Post(UUID postId, String userId, String userName, String imageURL, String description, String postImgURL, int likes, Date dateTime) {
+    public Post(UUID postId, String userId, String description, String postImgURL, int likes, Date dateTime) {
         this.postId = postId;
         this.userId = userId;
-        this.userName = userName;
-        this.imageURL = imageURL;
         this.description = description;
         this.postImgURL = postImgURL;
         this.likes = likes;
@@ -55,22 +43,6 @@ public class Post {
 
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    public String getUserName() {
-        return userName;
-    }
-
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
     }
 
     public String getDescription() {

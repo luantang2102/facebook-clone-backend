@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -51,17 +50,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     @Override
     public AuthResponseDto login(LoginDto loginDto) {
-        customUserDetailsService.loadUserByUsername(loginDto.getEmail());
-        UserEntity currentUser = customUserDetailsService.getUserDetails();
+        UserDto currentUser = userService.getUserByEmail(loginDto.getEmail());
         if(currentUser.isActive()) {
-            Authentication authentication = new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword());
-            //?
-            SecurityContextHolder.getContext().setAuthentication(authentication);
             String token = jwtService.generateToken(currentUser);
-            return new AuthResponseDto(token);
+            return new AuthResponseDto(token, currentUser);
         }
         else {
-            return new AuthResponseDto("Wait for admin approval");
+            return new AuthResponseDto("Wait for admin approval", currentUser);
         }
     }
 

@@ -1,6 +1,8 @@
 package com.luantang.facebookapi.services.impl;
 
 import com.luantang.facebookapi.constants.SecurityConstants;
+import com.luantang.facebookapi.dto.UserDto;
+import com.luantang.facebookapi.exceptions.JwtInvalidException;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.services.JWTService;
 import io.jsonwebtoken.Claims;
@@ -8,7 +10,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -26,7 +27,7 @@ public class JWTServiceImpl implements JWTService {
     }
 
     @Override
-    public String generateToken(UserEntity currentUser) {
+    public String generateToken(UserDto currentUser) {
         String userId = currentUser.getUserId();
         Date currentDate = new Date();
         Date expireDate = new Date(currentDate.getTime() + SecurityConstants.JWT_EXPIRATION);
@@ -62,22 +63,12 @@ public class JWTServiceImpl implements JWTService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public boolean validateToken(String token, UserEntity user) {
+    public boolean validateToken(String token) {
         try {
-            final String userId = extractUserId(token);
-            return (userId.equals(user.getUserId()) && !isTokenExpired(token));
+            return extractClaim(token, Claims::getExpiration).after(new Date());
         }
         catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("JWT incorrect");
-        }
-    }
-
-    private boolean isTokenExpired(String token) {
-        try {
-            return extractClaim(token, Claims::getExpiration).before(new Date());
-        }
-        catch (Exception ex) {
-            throw new AuthenticationCredentialsNotFoundException("JWT was expired");
+            throw new JwtInvalidException("JWT was expired");
         }
     }
 

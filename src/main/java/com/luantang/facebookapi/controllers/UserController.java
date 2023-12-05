@@ -30,8 +30,15 @@ public class UserController {
         return new ResponseEntity<>(userService.getUsers(pageNo, pageSize), HttpStatus.OK);
     }
 
-    @GetMapping("/getUser/{userId}")
+    @GetMapping("/current")
+    public ResponseEntity<UserDto> getCurrentUser() {;
+        return new ResponseEntity<>(userService.getCurrentUser(), HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String userId) {
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
+
+
  }

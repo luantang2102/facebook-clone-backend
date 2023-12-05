@@ -1,12 +1,14 @@
 package com.luantang.facebookapi.services.impl;
 
 import com.luantang.facebookapi.dto.PostDto;
+import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.dto.response.PostResponse;
 import com.luantang.facebookapi.exceptions.PostNotFoundException;
 import com.luantang.facebookapi.models.Post;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.repositories.PostRepository;
 import com.luantang.facebookapi.services.PostService;
+import com.luantang.facebookapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,15 +26,18 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final UserService userService;
 
     @Autowired
-    public PostServiceImpl(PostRepository postRepository) {
+    public PostServiceImpl(PostRepository postRepository, UserService userService) {
         this.postRepository = postRepository;
+        this.userService = userService;
     }
 
     @Override
     public PostDto createPost(PostDto postDto) {
         postDto.setPostId(UUID.randomUUID());
+        postDto.setUserId(getCurrentUser().getUserId());
         postDto.setUserName(getCurrentUser().getUsername());
         postDto.setImageURL(getCurrentUser().getUserImage());
         postDto.setDateTime(new Date());
@@ -88,9 +93,11 @@ public class PostServiceImpl implements PostService {
     }
 
     public PostDto mapToDto(Post post) {
+        UserDto user = userService.getUserById(post.getUserId());
         return new PostDto(post.getPostId(),
-                post.getUserName(),
-                post.getImageURL(),
+                post.getUserId(),
+                user.getUserName(),
+                user.getUserImage(),
                 post.getDescription(),
                 post.getPostImgURL(),
                 post.getLikes(),
@@ -99,9 +106,7 @@ public class PostServiceImpl implements PostService {
 
     public Post mapToEntity(PostDto postDto) {
         return new Post(postDto.getPostId(),
-                getCurrentUser().getUserId(),
-                postDto.getUserName(),
-                postDto.getImageURL(),
+                postDto.getUserId(),
                 postDto.getDescription(),
                 postDto.getPostImgURL(),
                 postDto.getLikes(),

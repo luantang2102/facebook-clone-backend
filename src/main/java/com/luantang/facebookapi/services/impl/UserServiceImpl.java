@@ -10,10 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,6 +44,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto getCurrentUser() {
+        return mapToDto((UserEntity) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+    }
+
+    @Override
     public UserDto getUserByEmail(String email) {
         UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException("User with associate email could not be found"));
         return mapToDto(user);
@@ -66,9 +70,8 @@ public class UserServiceImpl implements UserService {
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
         userDto.setUserName(user.getUsername());
-        userDto.setEmail(user.getEmail());
-        userDto.setPassword(user.getPassword());
         userDto.setUserImage(user.getUserImage());
+        userDto.setEmail(user.getEmail());
         userDto.setRole(user.getRole());
         userDto.setActivityStatus(user.isActive());
         userDto.setJoiningDate(user.getJoiningDate());
