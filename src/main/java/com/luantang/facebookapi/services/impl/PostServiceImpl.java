@@ -3,7 +3,9 @@ package com.luantang.facebookapi.services.impl;
 import com.luantang.facebookapi.dto.PostDto;
 import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.dto.response.PostResponse;
+import com.luantang.facebookapi.exceptions.DuplicatedIdException;
 import com.luantang.facebookapi.exceptions.PostNotFoundException;
+import com.luantang.facebookapi.exceptions.UserNotFoundException;
 import com.luantang.facebookapi.models.Post;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.repositories.PostRepository;
@@ -42,7 +44,7 @@ public class PostServiceImpl implements PostService {
         postDto.setImageURL(getCurrentUser().getUserImage());
         postDto.setDateTime(new Date());
         postDto.setLikes(0);
-
+        postDto.setLikedList(new ArrayList<>());
         Post post = mapToEntity(postDto);
 
         Post newPost = postRepository.save(post);
@@ -87,6 +89,63 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public PostDto updatePost(PostDto postDto, UUID postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be deleted"));
+
+        post.setDescription(postDto.getDescription());
+        post.setPostImgURL(postDto.getPostImgURL());
+
+        Post updatePost = postRepository.save(post);
+
+        return mapToDto(updatePost);
+    }
+
+    @Override
+    public PostDto addUserToLikedList(UUID postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be found"));
+
+        if(!isLiked(postId)) {
+            List<String> newLikedList = post.getLikedList();
+            newLikedList.add(getCurrentUser().getUserId());
+            post.setLikedList(newLikedList);
+            post.setLikes(post.getLikes() + 1);
+
+            Post updatePost = postRepository.save(post);
+
+            return mapToDto(updatePost);
+        }
+        else {
+            throw new DuplicatedIdException("This user already liked");
+        }
+    }
+
+    @Override
+    public PostDto removeUserFromLikedList(UUID postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be found"));
+
+        if(isLiked(postId)) {
+            List<String> newLikedList = post.getLikedList();
+            newLikedList.remove(getCurrentUser().getUserId());
+            post.setLikedList(newLikedList);
+            post.setLikes(post.getLikes() - 1);
+
+            Post updatePost = postRepository.save(post);
+
+            return mapToDto(updatePost);
+        }
+        else {
+            throw new UserNotFoundException("This user has not liked the post yet");
+        }
+    }
+
+    @Override
+    public boolean isLiked(UUID postId) {
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be deleted"));
+        List<String> likedList = post.getLikedList();
+        return likedList.stream().anyMatch(id -> id.equals(getCurrentUser().getUserId()));
+    }
+
+    @Override
     public void deletePost(UUID postId) {
         Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be deleted"));
         postRepository.delete(post);
@@ -101,7 +160,8 @@ public class PostServiceImpl implements PostService {
                 post.getDescription(),
                 post.getPostImgURL(),
                 post.getLikes(),
-                post.getDateTime());
+                post.getDateTime(),
+                post.getLikedList());
     }
 
     public Post mapToEntity(PostDto postDto) {
@@ -110,7 +170,8 @@ public class PostServiceImpl implements PostService {
                 postDto.getDescription(),
                 postDto.getPostImgURL(),
                 postDto.getLikes(),
-                postDto.getDateTime());
+                postDto.getDateTime(),
+                postDto.getLikedList());
     }
 
     public UserEntity getCurrentUser() {

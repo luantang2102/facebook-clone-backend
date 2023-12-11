@@ -1,7 +1,8 @@
-package com.luantang.facebookapi.controllers;
+package com.luantang.facebookapi.config.controllers;
 
 import com.luantang.facebookapi.dto.PostDto;
 import com.luantang.facebookapi.dto.response.PostResponse;
+import com.luantang.facebookapi.models.Post;
 import com.luantang.facebookapi.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,9 +31,24 @@ public class PostController{
     @GetMapping("/posts")
     public ResponseEntity<PostResponse> getPosts(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize
+            @RequestParam(value = "pageSize", defaultValue = "100", required = false) int pageSize
     ) {
         return new ResponseEntity<>(postService.getPosts(pageNo, pageSize), HttpStatus.OK);
+    }
+
+    @PutMapping("/post/{postId}/update")
+    public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable("postId") UUID postId) {
+        return new ResponseEntity<>(postService.updatePost(postDto, postId), HttpStatus.OK);
+    }
+
+    @PutMapping("post/{postId}/update/likes/add")
+    public ResponseEntity<PostDto> addUserToLikedList(@PathVariable("postId") UUID postId) {
+        return new ResponseEntity<>(postService.addUserToLikedList(postId), HttpStatus.OK);
+    }
+
+    @PutMapping("post/{postId}/update/likes/remove")
+    public ResponseEntity<PostDto> removeUserFromLikedList(@PathVariable("postId") UUID postId) {
+        return new ResponseEntity<>(postService.removeUserFromLikedList(postId), HttpStatus.OK);
     }
 
     @DeleteMapping("/post/{postId}/delete")
@@ -40,4 +56,10 @@ public class PostController{
         postService.deletePost(postId);
         return new ResponseEntity<>("Post deleted!", HttpStatus.OK);
     }
+
+    @RequestMapping("/post/{postId}/likes/isLiked")
+    public ResponseEntity<Boolean> isLiked(@PathVariable("postId") UUID postId) {
+        return new ResponseEntity<>(postService.isLiked(postId), HttpStatus.OK);
+    }
+
 }

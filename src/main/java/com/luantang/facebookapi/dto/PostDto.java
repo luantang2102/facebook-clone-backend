@@ -1,6 +1,7 @@
 package com.luantang.facebookapi.dto;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public class PostDto {
@@ -12,11 +13,12 @@ public class PostDto {
     private String postImgURL;
     private int likes;
     private Date dateTime;
+    private List<String> likedList;
 
     public PostDto() {
     }
 
-    public PostDto(UUID postId, String userId, String userName, String imageURL, String description, String postImgURL, int likes, Date dateTime) {
+    public PostDto(UUID postId, String userId, String userName, String imageURL, String description, String postImgURL, int likes, Date dateTime, List<String> likedList) {
         this.postId = postId;
         this.userId = userId;
         this.userName = userName;
@@ -25,6 +27,7 @@ public class PostDto {
         this.postImgURL = postImgURL;
         this.likes = likes;
         this.dateTime = dateTime;
+        this.likedList = likedList;
     }
 
     public UUID getPostId() {
@@ -89,5 +92,13 @@ public class PostDto {
 
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public List<String> getLikedList() {
+        return likedList;
+    }
+
+    public void setLikedList(List<String> likedList) {
+        this.likedList = likedList;
     }
 }

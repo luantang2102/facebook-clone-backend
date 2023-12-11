@@ -3,7 +3,6 @@ package com.luantang.facebookapi.services.impl;
 import com.luantang.facebookapi.constants.SecurityConstants;
 import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.exceptions.JwtInvalidException;
-import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.services.JWTService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

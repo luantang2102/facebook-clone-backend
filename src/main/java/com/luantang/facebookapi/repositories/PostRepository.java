@@ -8,5 +8,4 @@ import java.util.UUID;
 
 @Repository
 public interface PostRepository extends MongoRepository<Post, UUID> {
-
 }

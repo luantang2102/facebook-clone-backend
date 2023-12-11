@@ -1,4 +1,4 @@
-package com.luantang.facebookapi.controllers;
+package com.luantang.facebookapi.config.controllers;
 
 import com.luantang.facebookapi.dto.AuthResponseDto;
 import com.luantang.facebookapi.dto.LoginDto;

@@ -65,6 +65,13 @@ public class CommentServiceImpl implements CommentService {
         return commentResponse;
     }
 
+    @Override
+    public List<CommentDto> getCommentsByPostId(UUID postId) {
+       List<Comment> comments = commentRepository.findByPostId(postId);
+       List<CommentDto> commentDtoList = comments.stream().map(comment -> mapToDto(comment)).collect(Collectors.toList());
+       return commentDtoList;
+    }
+
     private Comment mapToEntity(CommentDto commentDto) {
         Comment comment = new Comment();
         comment.setCommentId(commentDto.getCommentId());

@@ -4,6 +4,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Document("Post")
@@ -15,18 +16,20 @@ public class Post {
     private String postImgURL;
     private int likes;
     private Date dateTime;
+    private List<String> likedList;
 
     public Post() {
 
     }
 
-    public Post(UUID postId, String userId, String description, String postImgURL, int likes, Date dateTime) {
+    public Post(UUID postId, String userId, String description, String postImgURL, int likes, Date dateTime, List<String> likedList) {
         this.postId = postId;
         this.userId = userId;
         this.description = description;
         this.postImgURL = postImgURL;
         this.likes = likes;
         this.dateTime = dateTime;
+        this.likedList = likedList;
     }
 
     public UUID getPostId() {
@@ -75,5 +78,13 @@ public class Post {
 
     public void setDateTime(Date dateTime) {
         this.dateTime = dateTime;
+    }
+
+    public List<String> getLikedList() {
+        return likedList;
+    }
+
+    public void setLikedList(List<String> likedList) {
+        this.likedList = likedList;
     }
 }

@@ -1,4 +1,4 @@
-package com.luantang.facebookapi.controllers;
+package com.luantang.facebookapi.config.controllers;
 
 import com.luantang.facebookapi.dto.CommentDto;
 import com.luantang.facebookapi.dto.response.CommentResponse;
@@ -7,6 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
 
 @CrossOrigin
 @RestController
@@ -33,4 +36,8 @@ public class CommentController {
         return new ResponseEntity<>(commentService.getComments(pageNo, pageSize), HttpStatus.OK);
     }
 
+    @GetMapping("/comments/{postId}")
+    public ResponseEntity<List<CommentDto>> getCommentsByPostId(@PathVariable("postId") UUID postId) {
+        return new ResponseEntity<>(commentService.getCommentsByPostId(postId), HttpStatus.OK);
+    }
 }
