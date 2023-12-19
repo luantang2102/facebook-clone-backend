@@ -11,4 +11,6 @@ public interface UserService {
     UserDto getUserByEmail(String email);
     UserDto getUserById(String userId);
     UserDto createUser(UserEntity user);
+
+    UserDto updateUser(UserDto userDto, String userId);
 }

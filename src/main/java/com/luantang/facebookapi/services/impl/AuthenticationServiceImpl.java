@@ -23,14 +23,12 @@ import java.util.Date;
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-    private final CustomUserDetailsService customUserDetailsService;
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JWTService jwtService;
 
     @Autowired
-    public AuthenticationServiceImpl(CustomUserDetailsService customUserDetailsService, UserService userService, PasswordEncoder passwordEncoder, JWTService jwtService) {
-        this.customUserDetailsService = customUserDetailsService;
+    public AuthenticationServiceImpl(UserService userService, PasswordEncoder passwordEncoder, JWTService jwtService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -67,6 +65,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setEmail(registerDto.getEmail());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
         user.setUserImage(registerDto.getUserImage());
+        user.setCoverImage(registerDto.getCoverImage());
         user.setRole(Role.USER);
         user.setActivityStatus(true);
         user.setJoiningDate(new Date());

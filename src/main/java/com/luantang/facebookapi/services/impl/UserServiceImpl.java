@@ -66,11 +66,25 @@ public class UserServiceImpl implements UserService {
         return mapToDto(user);
     }
 
+    @Override
+    public UserDto updateUser(UserDto userDto, String userId) {
+        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        user.setUserName(userDto.getUserName());
+        user.setUserImage(userDto.getUserImage());
+        user.setCoverImage(userDto.getUserCoverImage());
+
+        UserEntity updateUser = userRepository.save(user);
+
+        return mapToDto(updateUser);
+    }
+
     private UserDto mapToDto(UserEntity user) {
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
         userDto.setUserName(user.getUsername());
         userDto.setUserImage(user.getUserImage());
+        userDto.setUserCoverImage(user.getCoverImage());
         userDto.setEmail(user.getEmail());
         userDto.setRole(user.getRole());
         userDto.setActivityStatus(user.isActive());

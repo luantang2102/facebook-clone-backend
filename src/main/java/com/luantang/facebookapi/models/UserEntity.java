@@ -18,6 +18,7 @@ public class UserEntity implements UserDetails {
     private String userId;
     private String userName;
     private String userImage;
+    private String coverImage;
     private String email;
     private String password;
     private Role role;
@@ -28,10 +29,11 @@ public class UserEntity implements UserDetails {
     public UserEntity() {
     }
 
-    public UserEntity(String userId, String userName, String userImage, String email, String password, Role role, boolean activityStatus, Date joiningDate) {
+    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
+        this.coverImage = coverImage;
         this.email = email;
         this.password = password;
         this.role = role;
@@ -91,6 +93,14 @@ public class UserEntity implements UserDetails {
 
     public void setUserImage(String userImage) {
         this.userImage = userImage;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 
     public String getEmail() {

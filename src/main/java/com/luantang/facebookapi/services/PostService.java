@@ -9,6 +9,8 @@ public interface PostService {
     PostDto createPost(PostDto postDto);
     PostResponse getPosts(int pageNo, int pageSize);
 
+    PostResponse getPostsByUserId(int pageNo, int pageSize, String userId);
+
     PostDto updatePost(PostDto postDto, UUID postId);
 
     PostDto addUserToLikedList(UUID postId);

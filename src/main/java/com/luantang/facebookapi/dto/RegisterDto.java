@@ -6,13 +6,15 @@ public class RegisterDto {
     private String email;
     private String password;
     private String userImage;
+    private String coverImage;
 
-    public RegisterDto(String userId, String userName, String email, String password, String userImage) {
+    public RegisterDto(String userId, String userName, String email, String password, String userImage, String coverImage) {
         this.userId = userId;
         this.userName = userName;
         this.email = email;
         this.password = password;
         this.userImage = userImage;
+        this.coverImage = coverImage;
     }
 
     public String getUserId() {
@@ -53,5 +55,13 @@ public class RegisterDto {
 
     public void setUserImage(String userImage) {
         this.userImage = userImage;
+    }
+
+    public String getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(String coverImage) {
+        this.coverImage = coverImage;
     }
 }

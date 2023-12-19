@@ -76,6 +76,41 @@ public class PostServiceImpl implements PostService {
         }
 
         List<PostDto> content = sortedPosts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
+        PostResponse postResponse = new PostResponse();
+        postResponse.setContent(content);
+        postResponse.setPageNo(posts.getNumber());
+        postResponse.setPageSize(posts.getSize());
+        postResponse.setLast(posts.isLast());
+        postResponse.setTotalElements(posts.getTotalElements());
+        postResponse.setTotalPages(posts.getTotalPages());
+
+        return postResponse;
+    }
+
+    @Override
+    public PostResponse getPostsByUserId(int pageNo, int pageSize, String userId) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Post> posts = postRepository.findByUserId(pageable, userId);
+        List<Post> postList = posts.getContent();
+
+        List<Post> sortedPosts = new ArrayList<>(postList); // Copying elements to a new list
+
+        sortedPosts.clear(); // Clear the list before sorting
+        for (Post post : postList) {
+            boolean added = false;
+            for (int i = 0; i < sortedPosts.size(); i++) {
+                if (post.getDateTime().compareTo(sortedPosts.get(i).getDateTime()) > 0) {
+                    sortedPosts.add(i, post); // Insert at correct position
+                    added = true;
+                    break;
+                }
+            }
+            if (!added) {
+                sortedPosts.add(post); // Add at the end if it's the latest date
+            }
+        }
+
+        List<PostDto> content = sortedPosts.stream().map(post -> mapToDto(post)).collect(Collectors.toList());
 
         PostResponse postResponse = new PostResponse();
         postResponse.setContent(content);

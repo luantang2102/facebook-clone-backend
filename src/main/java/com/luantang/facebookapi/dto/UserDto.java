@@ -8,6 +8,7 @@ public class UserDto {
     private String userId;
     private String userName;
     private String userImage;
+    private String userCoverImage;
     private String email;
     private Role role;
 
@@ -17,10 +18,11 @@ public class UserDto {
     public UserDto() {
     }
 
-    public UserDto(String userId, String userName, String userImage, String email, Role role, boolean activityStatus, Date joiningDate) {
+    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
+        this.userCoverImage = userCoverImage;
         this.email = email;
         this.role = role;
         this.activityStatus = activityStatus;
@@ -49,6 +51,15 @@ public class UserDto {
 
     public void setUserImage(String userImage) {
         this.userImage = userImage;
+    }
+
+    public String getUserCoverImage() {
+
+        return userCoverImage;
+    }
+
+    public void setUserCoverImage(String userCoverImage) {
+        this.userCoverImage = userCoverImage;
     }
 
     public boolean isActive() {

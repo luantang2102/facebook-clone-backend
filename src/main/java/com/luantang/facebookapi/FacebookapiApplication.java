@@ -31,6 +31,7 @@ public class FacebookapiApplication implements CommandLineRunner {
 					UUID.randomUUID().toString(),
 					"administrator",
 					"",
+					"",
 					"admin@gmail.com",
 					new BCryptPasswordEncoder().encode("admin"),
 					Role.ADMIN,

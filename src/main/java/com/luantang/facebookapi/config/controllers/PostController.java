@@ -36,6 +36,15 @@ public class PostController{
         return new ResponseEntity<>(postService.getPosts(pageNo, pageSize), HttpStatus.OK);
     }
 
+    @GetMapping("/{userId}/posts")
+    public ResponseEntity<PostResponse> getPostsByUserId(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "100", required = false) int pageSize,
+            @PathVariable("userId") String userId
+    ) {
+        return new ResponseEntity<>(postService.getPostsByUserId(pageNo, pageSize, userId), HttpStatus.OK);
+    }
+
     @PutMapping("/post/{postId}/update")
     public ResponseEntity<PostDto> updatePost(@RequestBody PostDto postDto, @PathVariable("postId") UUID postId) {
         return new ResponseEntity<>(postService.updatePost(postDto, postId), HttpStatus.OK);
