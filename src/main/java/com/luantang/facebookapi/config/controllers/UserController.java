@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @CrossOrigin
@@ -40,8 +41,23 @@ public class UserController {
         return new ResponseEntity<>(userService.getUserById(userId), HttpStatus.OK);
     }
 
-    @PutMapping("/{userId}/update")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto, @PathVariable("userId") String userId) {
-        return new ResponseEntity<>(userService.updateUser(userDto, userId), HttpStatus.OK);
+    @PutMapping("/current/update")
+    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto) {
+        return new ResponseEntity<>(userService.updateUser(userDto), HttpStatus.OK);
+    }
+
+    @PutMapping("/current/friend/add/{saveUserId}")
+    public ResponseEntity<UserDto> addFriendToCurrentUser(@PathVariable("saveUserId") String saveUserId) {
+        return new ResponseEntity<>(userService.addFriendToCurrentUser(saveUserId), HttpStatus.OK);
+    }
+
+    @PutMapping("/current/friend/remove/{removeUserId}")
+    public ResponseEntity<UserDto> removeFriendToCurrentUser(@PathVariable("removeUserId") String removeUserId) {
+        return new ResponseEntity<>(userService.removeFriendToCurrentUser(removeUserId), HttpStatus.OK);
+    }
+
+    @GetMapping("/current/friends")
+    public ResponseEntity<List<UserDto>> getFriendListFromCurrentUser() {
+        return new ResponseEntity<>(userService.getFriendListFromCurrentUser(),HttpStatus.OK);
     }
  }

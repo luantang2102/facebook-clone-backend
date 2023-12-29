@@ -175,7 +175,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public boolean isLiked(UUID postId) {
-        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be deleted"));
+        Post post = postRepository.findById(postId).orElseThrow(() -> new PostNotFoundException("Post could not be found"));
         List<String> likedList = post.getLikedList();
         return likedList.stream().anyMatch(id -> id.equals(getCurrentUser().getUserId()));
     }

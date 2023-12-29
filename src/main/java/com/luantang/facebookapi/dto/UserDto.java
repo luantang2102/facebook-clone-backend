@@ -3,6 +3,7 @@ package com.luantang.facebookapi.dto;
 import com.luantang.facebookapi.models.Role;
 
 import java.util.Date;
+import java.util.List;
 
 public class UserDto {
     private String userId;
@@ -15,10 +16,12 @@ public class UserDto {
     private boolean activityStatus;
     private Date joiningDate;
 
+    private List<String> friendIdList;
+
     public UserDto() {
     }
 
-    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate) {
+    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate, List<String> friendIdList) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -27,6 +30,7 @@ public class UserDto {
         this.role = role;
         this.activityStatus = activityStatus;
         this.joiningDate = joiningDate;
+        this.friendIdList = friendIdList;
     }
 
     public String getUserId() {
@@ -92,5 +96,13 @@ public class UserDto {
 
     public void setJoiningDate(Date joiningDate) {
         this.joiningDate = joiningDate;
+    }
+
+    public List<String> getFriendIdList() {
+        return friendIdList;
+    }
+
+    public void setFriendIdList(List<String> friendIdList) {
+        this.friendIdList = friendIdList;
     }
 }

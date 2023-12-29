@@ -9,6 +9,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 import java.util.UUID;
@@ -36,7 +37,8 @@ public class FacebookapiApplication implements CommandLineRunner {
 					new BCryptPasswordEncoder().encode("admin"),
 					Role.ADMIN,
 					true,
-					new Date());
+					new Date(),
+					new ArrayList<>());
 			userRepository.save(user);
 		}
 	}

@@ -26,10 +26,12 @@ public class UserEntity implements UserDetails {
     private boolean activityStatus;
     private Date joiningDate;
 
+    private List<String> friendIdList;
+
     public UserEntity() {
     }
 
-    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate) {
+    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate, List<String> friendIdList) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -39,6 +41,7 @@ public class UserEntity implements UserDetails {
         this.role = role;
         this.activityStatus = activityStatus;
         this.joiningDate = joiningDate;
+        this.friendIdList = friendIdList;
     }
 
     @Override
@@ -137,5 +140,13 @@ public class UserEntity implements UserDetails {
 
     public void setJoiningDate(Date joiningDate) {
         this.joiningDate = joiningDate;
+    }
+
+    public List<String> getFriendIdList() {
+        return friendIdList;
+    }
+
+    public void setFriendIdList(List<String> friendIdList) {
+        this.friendIdList = friendIdList;
     }
 }
