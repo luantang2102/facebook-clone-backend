@@ -1,6 +1,7 @@
 package com.luantang.facebookapi.dto;
 
-import com.luantang.facebookapi.models.Role;
+import com.luantang.facebookapi.models.Friend;
+import com.luantang.facebookapi.models.enums.Role;
 
 import java.util.Date;
 import java.util.List;
@@ -16,12 +17,12 @@ public class UserDto {
     private boolean activityStatus;
     private Date joiningDate;
 
-    private List<String> friendIdList;
-
+    private int totalFriends;
+    private List<Friend> friendIdList;
     public UserDto() {
     }
 
-    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate, List<String> friendIdList) {
+    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate, int totalFriends, List<Friend> friendIdList) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -30,6 +31,7 @@ public class UserDto {
         this.role = role;
         this.activityStatus = activityStatus;
         this.joiningDate = joiningDate;
+        this.totalFriends = totalFriends;
         this.friendIdList = friendIdList;
     }
 
@@ -98,11 +100,19 @@ public class UserDto {
         this.joiningDate = joiningDate;
     }
 
-    public List<String> getFriendIdList() {
+    public int getTotalFriends() {
+        return totalFriends;
+    }
+
+    public void setTotalFriends(int totalFriends) {
+        this.totalFriends = totalFriends;
+    }
+
+    public List<Friend> getFriendIdList() {
         return friendIdList;
     }
 
-    public void setFriendIdList(List<String> friendIdList) {
+    public void setFriendIdList(List<Friend> friendIdList) {
         this.friendIdList = friendIdList;
     }
 }

@@ -66,7 +66,7 @@ public class PostController{
         return new ResponseEntity<>("Post deleted!", HttpStatus.OK);
     }
 
-    @RequestMapping("/post/{postId}/likes/isLiked")
+    @GetMapping("/post/{postId}/likes/isLiked")
     public ResponseEntity<Boolean> isLiked(@PathVariable("postId") UUID postId) {
         return new ResponseEntity<>(postService.isLiked(postId), HttpStatus.OK);
     }

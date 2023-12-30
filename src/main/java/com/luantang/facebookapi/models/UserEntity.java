@@ -1,5 +1,6 @@
 package com.luantang.facebookapi.models;
 
+import com.luantang.facebookapi.models.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -9,7 +10,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Document("User")
 public class UserEntity implements UserDetails {
@@ -26,12 +26,13 @@ public class UserEntity implements UserDetails {
     private boolean activityStatus;
     private Date joiningDate;
 
-    private List<String> friendIdList;
+    private int totalFriends;
+    private List<Friend> friendIdList;
 
     public UserEntity() {
     }
 
-    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate, List<String> friendIdList) {
+    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate, int totalFriends, List<Friend> friendIdList) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -41,6 +42,7 @@ public class UserEntity implements UserDetails {
         this.role = role;
         this.activityStatus = activityStatus;
         this.joiningDate = joiningDate;
+        this.totalFriends = totalFriends;
         this.friendIdList = friendIdList;
     }
 
@@ -142,11 +144,19 @@ public class UserEntity implements UserDetails {
         this.joiningDate = joiningDate;
     }
 
-    public List<String> getFriendIdList() {
+    public int getTotalFriends() {
+        return totalFriends;
+    }
+
+    public void setTotalFriends(int totalFriends) {
+        this.totalFriends = totalFriends;
+    }
+
+    public List<Friend> getFriendIdList() {
         return friendIdList;
     }
 
-    public void setFriendIdList(List<String> friendIdList) {
+    public void setFriendIdList(List<Friend> friendIdList) {
         this.friendIdList = friendIdList;
     }
 }

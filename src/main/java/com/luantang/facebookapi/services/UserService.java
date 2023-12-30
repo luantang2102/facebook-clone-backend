@@ -13,14 +13,23 @@ public interface UserService {
     UserDto getUserByEmail(String email);
     UserDto getUserById(String userId);
     UserDto createUser(UserEntity user);
-
     UserDto updateUser(UserDto userDto);
 
-    UserDto addFriendToCurrentUser(String saveUserId);
+    UserDto addFriendToCurrentUser(String targetUserId);
 
-    UserDto removeFriendToCurrentUser(String removeUserId);
+    UserDto removeFriendFromCurrentUser(String targetUserId);
 
-    boolean isFriend(String targetUserId);
+    UserDto pendCurrentUserToFriendListOfTargetUser(String targetUserId);
+
+    UserDto offPendCurrentUserFromFriendListOfTargetUser(String targetUserId);
+
+    boolean isFriendWithCurrentUser(String targetUserId);
+
+    boolean isOnPendingWithCurrentUser(String targetUserId);
+
+    boolean isCurrentUserOnPendingWithTargetUser(String targetUserId);
 
     List<UserDto> getFriendListFromCurrentUser();
+
+    List<UserDto> getPendingFriendListFromCurrentUser();
 }

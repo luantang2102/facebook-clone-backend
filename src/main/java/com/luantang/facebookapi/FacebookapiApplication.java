@@ -1,6 +1,6 @@
 package com.luantang.facebookapi;
 
-import com.luantang.facebookapi.models.Role;
+import com.luantang.facebookapi.models.enums.Role;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +38,7 @@ public class FacebookapiApplication implements CommandLineRunner {
 					Role.ADMIN,
 					true,
 					new Date(),
+					0,
 					new ArrayList<>());
 			userRepository.save(user);
 		}

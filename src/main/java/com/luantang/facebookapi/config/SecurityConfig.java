@@ -1,6 +1,6 @@
 package com.luantang.facebookapi.config;
 
-import com.luantang.facebookapi.models.Role;
+import com.luantang.facebookapi.models.enums.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

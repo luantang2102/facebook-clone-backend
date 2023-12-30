@@ -3,7 +3,9 @@ package com.luantang.facebookapi.services.impl;
 import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.dto.response.UserResponse;
 import com.luantang.facebookapi.exceptions.UserNotFoundException;
+import com.luantang.facebookapi.models.Friend;
 import com.luantang.facebookapi.models.UserEntity;
+import com.luantang.facebookapi.models.enums.FriendStatus;
 import com.luantang.facebookapi.repositories.UserRepository;
 import com.luantang.facebookapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -85,17 +88,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto addFriendToCurrentUser(String saveUserId) {
-        UserEntity user = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+    public UserDto addFriendToCurrentUser(String targetUserId) {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if(!isFriend(saveUserId)) {
-            List<String> newFriendIdList = user.getFriendIdList();
-            newFriendIdList.add(saveUserId);
-            user.setFriendIdList(newFriendIdList);
+        if(!isFriendWithCurrentUser(targetUserId)) {
+            if(isOnPendingWithCurrentUser(targetUserId)) {
+                //Add current user to friend list of target user
+                List<Friend> newTargetUserFriendIdList = targetUser.getFriendIdList();
+                newTargetUserFriendIdList.add(new Friend(currentUser.getUserId(), FriendStatus.FRIEND, new Date()));
+                targetUser.setFriendIdList(newTargetUserFriendIdList);
+                targetUser.setTotalFriends(targetUser.getTotalFriends() + 1);
+                userRepository.save(targetUser);
 
-            UserEntity updateUser = userRepository.save(user);
+                //Add target user to friend list of current user and return dto of current user
+                List<Friend> newCurrentUserFriendIdList = currentUser.getFriendIdList();
+                newCurrentUserFriendIdList.stream()
+                        .filter(friend -> friend.getUserId().equals(targetUserId))
+                        .findFirst()
+                        .ifPresent(friend -> {
+                            friend.setFriendStatus(FriendStatus.FRIEND);
+                            friend.setConnectDate(new Date());
+                        });
+                currentUser.setFriendIdList(newCurrentUserFriendIdList);
+                currentUser.setTotalFriends(currentUser.getTotalFriends() + 1);
+                UserEntity updateCurrentUser = userRepository.save(currentUser);
 
-            return mapToDto(updateUser);
+                return mapToDto(updateCurrentUser);
+            }
+            else {
+                throw new UserNotFoundException("This user not found on pending list");
+            }
         }
         else {
             throw new UserNotFoundException("This user is your friend already");
@@ -103,37 +126,134 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto removeFriendToCurrentUser(String removeUserId) {
-        UserEntity user = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+    public UserDto removeFriendFromCurrentUser(String targetUserId) {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        if(isFriend(removeUserId)) {
-            List<String> newFriendIdList = user.getFriendIdList();
-            newFriendIdList.remove(removeUserId);
-            user.setFriendIdList(newFriendIdList);
+        if(isFriendWithCurrentUser(targetUserId)) {
+            //Remove current user from friend list of target user
+            List<Friend> newTargetFriendIdList = targetUser.getFriendIdList();
+            newTargetFriendIdList.removeIf(friend -> friend.getFriendStatus() == FriendStatus.FRIEND && friend.getUserId().equals(currentUser.getUserId()));
+            targetUser.setFriendIdList(newTargetFriendIdList);
+            targetUser.setTotalFriends(targetUser.getTotalFriends() - 1);
+            userRepository.save(targetUser);
 
-            UserEntity updateUser = userRepository.save(user);
+            //Remove target user from friend list of current user and return dto of current user
+            List<Friend> newCurrentFriendIdList = currentUser.getFriendIdList();
+            newCurrentFriendIdList.removeIf(friend -> friend.getFriendStatus() == FriendStatus.FRIEND && friend.getUserId().equals(targetUserId));
+            currentUser.setFriendIdList(newCurrentFriendIdList);
+            currentUser.setTotalFriends(currentUser.getTotalFriends() - 1);
+            UserEntity updateUser = userRepository.save(currentUser);
 
             return mapToDto(updateUser);
         }
         else {
-            throw new UserNotFoundException("User not found");
+            throw new UserNotFoundException("This user is not your friend");
         }
     }
 
     @Override
-    public boolean isFriend(String targetUserId) {
-        UserEntity user = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
-        List<String> friendIdList = user.getFriendIdList();
-        return friendIdList.stream().anyMatch(id -> id.equals(targetUserId));
+    public UserDto pendCurrentUserToFriendListOfTargetUser(String targetUserId) {
+        UserEntity targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if(!isCurrentUserOnPendingWithTargetUser(targetUserId)) {
+            if(!isFriendWithCurrentUser(targetUserId)) {
+                List<Friend> newPendingFriendIdList = targetUser.getFriendIdList();
+                newPendingFriendIdList.add(new Friend(currentUser.getUserId(), FriendStatus.PENDING, new Date()));
+                targetUser.setFriendIdList(newPendingFriendIdList);
+
+                UserEntity updateTargetUser = userRepository.save(targetUser);
+
+                return mapToDto(updateTargetUser);
+            }
+            else {
+                throw new UserNotFoundException("This user is your friend already");
+            }
+        }
+        else {
+            throw new UserNotFoundException("You are on pending already");
+        }
+    }
+
+    @Override
+    public UserDto offPendCurrentUserFromFriendListOfTargetUser(String targetUserId) {
+        UserEntity targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if(isCurrentUserOnPendingWithTargetUser(targetUserId)) {
+            List<Friend> newFriendIdList = targetUser.getFriendIdList();
+
+            newFriendIdList.removeIf(friend -> friend.getFriendStatus() == FriendStatus.PENDING && friend.getUserId().equals(currentUser.getUserId()));
+
+            targetUser.setFriendIdList(newFriendIdList);
+
+            UserEntity updateTargetUser = userRepository.save(targetUser);
+
+            return mapToDto(updateTargetUser);
+
+        }
+        else {
+            throw new UserNotFoundException("You are not on pending");
+        }
+    }
+
+    @Override
+    public boolean isFriendWithCurrentUser(String targetUserId) {
+        userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return currentUser.getFriendIdList()
+                .stream()
+                .anyMatch(friend -> (friend.getFriendStatus() == FriendStatus.FRIEND) && friend.getUserId().equals(targetUserId));
+    }
+
+    @Override
+    public boolean isOnPendingWithCurrentUser(String targetUserId) {
+        userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return currentUser.getFriendIdList()
+                .stream()
+                .anyMatch(friend -> (friend.getFriendStatus() == FriendStatus.PENDING) && friend.getUserId().equals(targetUserId));
+    }
+
+    @Override
+    public boolean isCurrentUserOnPendingWithTargetUser(String targetUserId) {
+        UserEntity targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        return targetUser.getFriendIdList()
+                .stream()
+                .anyMatch(friend -> (friend.getFriendStatus() == FriendStatus.PENDING) && friend.getUserId().equals(currentUser.getUserId()));
     }
 
     @Override
     public List<UserDto> getFriendListFromCurrentUser() {
-        UserEntity user = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         List<UserEntity> friendList = new ArrayList<>();
-        for(String friendId : user.getFriendIdList()) {
-            friendList.add(userRepository.findById(friendId).orElseThrow(() -> new UserNotFoundException("User not found")));
+        for(Friend friend : currentUser.getFriendIdList()) {
+            if(friend.getFriendStatus() == FriendStatus.FRIEND) {
+                friendList.add(userRepository.findById(friend.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found")));
+            }
+        }
+        List<UserDto> content = friendList.stream().map(friend -> mapToDto(friend)).collect(Collectors.toList());
+        return content;
+    }
+
+    @Override
+    public List<UserDto> getPendingFriendListFromCurrentUser() {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        List<UserEntity> friendList = new ArrayList<>();
+        for(Friend friend : currentUser.getFriendIdList()) {
+            if(friend.getFriendStatus() == FriendStatus.PENDING) {
+                friendList.add(userRepository.findById(friend.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found")));
+            }
         }
         List<UserDto> content = friendList.stream().map(friend -> mapToDto(friend)).collect(Collectors.toList());
         return content;
@@ -149,6 +269,7 @@ public class UserServiceImpl implements UserService {
         userDto.setRole(user.getRole());
         userDto.setActivityStatus(user.isActive());
         userDto.setJoiningDate(user.getJoiningDate());
+        userDto.setTotalFriends(user.getTotalFriends());
         userDto.setFriendIdList(user.getFriendIdList());
         return userDto;
     }

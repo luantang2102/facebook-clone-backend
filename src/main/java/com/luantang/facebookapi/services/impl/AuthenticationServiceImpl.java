@@ -5,16 +5,12 @@ import com.luantang.facebookapi.dto.LoginDto;
 import com.luantang.facebookapi.dto.RegisterDto;
 import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.exceptions.UserNotFoundException;
-import com.luantang.facebookapi.models.Role;
+import com.luantang.facebookapi.models.enums.Role;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.services.AuthenticationService;
-import com.luantang.facebookapi.services.CustomUserDetailsService;
 import com.luantang.facebookapi.services.JWTService;
 import com.luantang.facebookapi.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,6 +66,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setRole(Role.USER);
         user.setActivityStatus(true);
         user.setJoiningDate(new Date());
+        user.setTotalFriends(0);
         user.setFriendIdList(new ArrayList<>());
         return user;
     }
