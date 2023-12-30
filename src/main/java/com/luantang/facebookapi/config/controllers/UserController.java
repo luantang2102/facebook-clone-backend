@@ -67,6 +67,11 @@ public class UserController {
         return new ResponseEntity<>(userService.isFriendWithCurrentUser(targetUserId), HttpStatus.OK);
     }
 
+    @PutMapping("/current/friend/pending/remove/{targetUserId}")
+    public ResponseEntity<UserDto> removePendingFriendFromCurrentUser(@PathVariable("targetUserId") String targetUserId) {
+        return new ResponseEntity<>(userService.removePendingFriendFromCurrentUser(targetUserId), HttpStatus.OK);
+    }
+
     @PutMapping("/{targetUserId}/friend/pending/add")
     public ResponseEntity<UserDto> pendCurrentUserToFriendListOfTargetUser(@PathVariable("targetUserId") String targetUserId) {
         return new ResponseEntity<>(userService.pendCurrentUserToFriendListOfTargetUser(targetUserId), HttpStatus.OK);

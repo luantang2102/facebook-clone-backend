@@ -153,15 +153,34 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserDto removePendingFriendFromCurrentUser(String targetUserId) {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        if(isOnPendingWithCurrentUser(targetUserId)) {
+            List<Friend> newFriendIdList = currentUser.getFriendIdList();
+
+            newFriendIdList.removeIf(friend -> friend.getFriendStatus() == FriendStatus.PENDING && friend.getUserId().equals(targetUserId));
+            currentUser.setFriendIdList(newFriendIdList);
+
+            UserEntity updateTargetUser = userRepository.save(currentUser);
+
+            return mapToDto(updateTargetUser);
+        }
+        else {
+            throw new UserNotFoundException("User not found on pending list");
+        }
+    }
+
+    @Override
     public UserDto pendCurrentUserToFriendListOfTargetUser(String targetUserId) {
         UserEntity targetUser = userRepository.findById(targetUserId).orElseThrow(() -> new UserNotFoundException("User not found"));
         UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if(!isCurrentUserOnPendingWithTargetUser(targetUserId)) {
             if(!isFriendWithCurrentUser(targetUserId)) {
-                List<Friend> newPendingFriendIdList = targetUser.getFriendIdList();
-                newPendingFriendIdList.add(new Friend(currentUser.getUserId(), FriendStatus.PENDING, new Date()));
-                targetUser.setFriendIdList(newPendingFriendIdList);
+                List<Friend> newFriendIdList = targetUser.getFriendIdList();
+                newFriendIdList.add(new Friend(currentUser.getUserId(), FriendStatus.PENDING, new Date()));
+                targetUser.setFriendIdList(newFriendIdList);
 
                 UserEntity updateTargetUser = userRepository.save(targetUser);
 

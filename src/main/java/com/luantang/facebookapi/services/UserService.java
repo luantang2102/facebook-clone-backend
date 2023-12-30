@@ -19,6 +19,8 @@ public interface UserService {
 
     UserDto removeFriendFromCurrentUser(String targetUserId);
 
+    UserDto removePendingFriendFromCurrentUser(String targetUserId);
+
     UserDto pendCurrentUserToFriendListOfTargetUser(String targetUserId);
 
     UserDto offPendCurrentUserFromFriendListOfTargetUser(String targetUserId);
