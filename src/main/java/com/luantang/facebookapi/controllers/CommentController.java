@@ -1,4 +1,4 @@
-package com.luantang.facebookapi.config.controllers;
+package com.luantang.facebookapi.controllers;
 
 import com.luantang.facebookapi.dto.CommentDto;
 import com.luantang.facebookapi.dto.response.CommentResponse;

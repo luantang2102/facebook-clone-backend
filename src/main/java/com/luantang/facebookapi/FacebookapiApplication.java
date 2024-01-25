@@ -1,5 +1,6 @@
 package com.luantang.facebookapi;
 
+import com.luantang.facebookapi.models.enums.ConnectStatus;
 import com.luantang.facebookapi.models.enums.Role;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.repositories.UserRepository;
@@ -39,7 +40,8 @@ public class FacebookapiApplication implements CommandLineRunner {
 					true,
 					new Date(),
 					0,
-					new ArrayList<>());
+					new ArrayList<>(),
+					ConnectStatus.ONLINE);
 			userRepository.save(user);
 		}
 	}

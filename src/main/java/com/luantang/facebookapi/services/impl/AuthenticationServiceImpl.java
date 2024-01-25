@@ -5,6 +5,7 @@ import com.luantang.facebookapi.dto.LoginDto;
 import com.luantang.facebookapi.dto.RegisterDto;
 import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.exceptions.UserNotFoundException;
+import com.luantang.facebookapi.models.enums.ConnectStatus;
 import com.luantang.facebookapi.models.enums.Role;
 import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.services.AuthenticationService;
@@ -38,7 +39,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             return null;
         }
         catch (UserNotFoundException ex) {
-            UserEntity user = mapRegisterDtoToEntity(registerDto);
+            UserEntity user = mapRegisterDtoToNewEntity(registerDto);
             return userService.createUser(user);
         }
     }
@@ -55,19 +56,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         }
     }
 
-    private UserEntity mapRegisterDtoToEntity(RegisterDto registerDto) {
-        UserEntity user = new UserEntity();
-        user.setUserId(registerDto.getUserId());
-        user.setUserName(registerDto.getUserName());
-        user.setEmail(registerDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-        user.setUserImage(registerDto.getUserImage());
-        user.setCoverImage(registerDto.getCoverImage());
-        user.setRole(Role.USER);
-        user.setActivityStatus(true);
-        user.setJoiningDate(new Date());
-        user.setTotalFriends(0);
-        user.setFriendIdList(new ArrayList<>());
-        return user;
+    private UserEntity mapRegisterDtoToNewEntity(RegisterDto registerDto) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserId(registerDto.getUserId());
+        userEntity.setUserName(registerDto.getUserName());
+        userEntity.setEmail(registerDto.getEmail());
+        userEntity.setPassword(passwordEncoder.encode(registerDto.getPassword()));
+        userEntity.setUserImage(registerDto.getUserImage());
+        userEntity.setCoverImage(registerDto.getCoverImage());
+        userEntity.setRole(Role.USER);
+        userEntity.setActivityStatus(true);
+        userEntity.setJoiningDate(new Date());
+        userEntity.setTotalFriends(0);
+        userEntity.setFriendIdList(new ArrayList<>());
+        userEntity.setConnectStatus(ConnectStatus.ONLINE);
+
+        return userEntity;
     }
 }

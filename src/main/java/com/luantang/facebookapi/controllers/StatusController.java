@@ -1,4 +1,4 @@
-package com.luantang.facebookapi.config.controllers;
+package com.luantang.facebookapi.controllers;
 
 import com.luantang.facebookapi.dto.StatusDto;
 import com.luantang.facebookapi.dto.response.StatusResponse;

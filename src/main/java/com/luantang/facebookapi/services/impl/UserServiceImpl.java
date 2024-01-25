@@ -5,6 +5,7 @@ import com.luantang.facebookapi.dto.response.UserResponse;
 import com.luantang.facebookapi.exceptions.UserNotFoundException;
 import com.luantang.facebookapi.models.Friend;
 import com.luantang.facebookapi.models.UserEntity;
+import com.luantang.facebookapi.models.enums.ConnectStatus;
 import com.luantang.facebookapi.models.enums.FriendStatus;
 import com.luantang.facebookapi.repositories.UserRepository;
 import com.luantang.facebookapi.services.UserService;
@@ -278,6 +279,39 @@ public class UserServiceImpl implements UserService {
         return content;
     }
 
+    @Override
+    public UserDto connect() {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        currentUser.setConnectStatus(ConnectStatus.ONLINE);
+        UserEntity connectedUser = userRepository.save(currentUser);
+        return mapToDto(connectedUser);
+    }
+
+    @Override
+    public UserDto disconnect() {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        currentUser.setConnectStatus(ConnectStatus.OFFLINE);
+        UserEntity disconnectedUser = userRepository.save(currentUser);
+        return mapToDto(disconnectedUser);
+    }
+
+    @Override
+    public List<UserDto> getConnectedFriendListFromCurrentUser() {
+        UserEntity currentUser = userRepository.findById(getCurrentUser().getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        List<UserEntity> connectedFriendList = new ArrayList<>();
+        for(Friend friend : currentUser.getFriendIdList()) {
+            if(friend.getFriendStatus() == FriendStatus.FRIEND) {
+                UserEntity userIsFriend = userRepository.findById(friend.getUserId()).orElseThrow(() -> new UserNotFoundException("User not found"));
+                if(userIsFriend.getConnectStatus() == ConnectStatus.ONLINE) {
+                    connectedFriendList.add(userIsFriend);
+                }
+            }
+        }
+        List<UserDto> content = connectedFriendList.stream().map(friend -> mapToDto(friend)).collect(Collectors.toList());
+        return content;
+    }
+
     private UserDto mapToDto(UserEntity user) {
         UserDto userDto = new UserDto();
         userDto.setUserId(user.getUserId());
@@ -290,6 +324,8 @@ public class UserServiceImpl implements UserService {
         userDto.setJoiningDate(user.getJoiningDate());
         userDto.setTotalFriends(user.getTotalFriends());
         userDto.setFriendIdList(user.getFriendIdList());
+        userDto.setConnectStatus(user.getConnectStatus());
         return userDto;
     }
+
 }

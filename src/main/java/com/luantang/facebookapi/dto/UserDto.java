@@ -1,6 +1,7 @@
 package com.luantang.facebookapi.dto;
 
 import com.luantang.facebookapi.models.Friend;
+import com.luantang.facebookapi.models.enums.ConnectStatus;
 import com.luantang.facebookapi.models.enums.Role;
 
 import java.util.Date;
@@ -13,16 +14,16 @@ public class UserDto {
     private String userCoverImage;
     private String email;
     private Role role;
-
     private boolean activityStatus;
     private Date joiningDate;
-
     private int totalFriends;
     private List<Friend> friendIdList;
+    private ConnectStatus connectStatus;
+
     public UserDto() {
     }
 
-    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate, int totalFriends, List<Friend> friendIdList) {
+    public UserDto(String userId, String userName, String userImage, String userCoverImage, String email, Role role, boolean activityStatus, Date joiningDate, int totalFriends, List<Friend> friendIdList, ConnectStatus connectStatus) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -33,6 +34,7 @@ public class UserDto {
         this.joiningDate = joiningDate;
         this.totalFriends = totalFriends;
         this.friendIdList = friendIdList;
+        this.connectStatus = connectStatus;
     }
 
     public String getUserId() {
@@ -114,5 +116,13 @@ public class UserDto {
 
     public void setFriendIdList(List<Friend> friendIdList) {
         this.friendIdList = friendIdList;
+    }
+
+    public ConnectStatus getConnectStatus() {
+        return connectStatus;
+    }
+
+    public void setConnectStatus(ConnectStatus connectStatus) {
+        this.connectStatus = connectStatus;
     }
 }

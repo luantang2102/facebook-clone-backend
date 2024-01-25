@@ -1,26 +1,30 @@
-package com.luantang.facebookapi.config.controllers;
+package com.luantang.facebookapi.controllers;
 
 import com.luantang.facebookapi.dto.UserDto;
 import com.luantang.facebookapi.dto.response.UserResponse;
+import com.luantang.facebookapi.models.UserEntity;
 import com.luantang.facebookapi.services.UserService;
-import org.apache.http.protocol.HTTP;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.logging.Logger;
 
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserController {
 
+    private final SimpMessagingTemplate messagingTemplate;
     private final UserService userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(SimpMessagingTemplate messagingTemplate, UserService userService) {
+        this.messagingTemplate = messagingTemplate;
         this.userService = userService;
     }
 
@@ -96,4 +100,25 @@ public class UserController {
     public ResponseEntity<Boolean> isOnPendingWithCurrentUser(@PathVariable("targetUserId") String targetUserId) {
         return new ResponseEntity<>(userService.isOnPendingWithCurrentUser(targetUserId), HttpStatus.OK);
     }
+
+    @PostMapping("/current/connect")
+    public ResponseEntity<UserDto> connectCurrentUser() {
+        UserDto currentUser = userService.connect();
+        String destination = "/user/" + currentUser.getUserId() + "/queue";
+        messagingTemplate.convertAndSend(destination, currentUser);
+        return new ResponseEntity<>(currentUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/current/disconnect")
+    public ResponseEntity<String> disconnectCurrentUser() {
+        UserDto currentUser = userService.disconnect();
+        messagingTemplate.convertAndSend("/user/public", currentUser);
+        return new ResponseEntity<>("User disconnected", HttpStatus.OK);
+    }
+
+    @GetMapping("/current/friends/connected")
+    public ResponseEntity<List<UserDto>> getConnectedFriendListFromCurrentUser() {
+        return new ResponseEntity<>(userService.getConnectedFriendListFromCurrentUser(), HttpStatus.OK);
+    }
+
  }

@@ -1,5 +1,6 @@
 package com.luantang.facebookapi.models;
 
+import com.luantang.facebookapi.models.enums.ConnectStatus;
 import com.luantang.facebookapi.models.enums.Role;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -22,17 +23,16 @@ public class UserEntity implements UserDetails {
     private String email;
     private String password;
     private Role role;
-
     private boolean activityStatus;
     private Date joiningDate;
-
     private int totalFriends;
     private List<Friend> friendIdList;
+    private ConnectStatus connectStatus;
 
     public UserEntity() {
     }
 
-    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate, int totalFriends, List<Friend> friendIdList) {
+    public UserEntity(String userId, String userName, String userImage, String coverImage, String email, String password, Role role, boolean activityStatus, Date joiningDate, int totalFriends, List<Friend> friendIdList, ConnectStatus connectStatus) {
         this.userId = userId;
         this.userName = userName;
         this.userImage = userImage;
@@ -44,6 +44,7 @@ public class UserEntity implements UserDetails {
         this.joiningDate = joiningDate;
         this.totalFriends = totalFriends;
         this.friendIdList = friendIdList;
+        this.connectStatus = connectStatus;
     }
 
     @Override
@@ -158,5 +159,13 @@ public class UserEntity implements UserDetails {
 
     public void setFriendIdList(List<Friend> friendIdList) {
         this.friendIdList = friendIdList;
+    }
+
+    public ConnectStatus getConnectStatus() {
+        return connectStatus;
+    }
+
+    public void setConnectStatus(ConnectStatus connectStatus) {
+        this.connectStatus = connectStatus;
     }
 }

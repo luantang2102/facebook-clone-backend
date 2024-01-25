@@ -34,4 +34,10 @@ public interface UserService {
     List<UserDto> getFriendListFromCurrentUser();
 
     List<UserDto> getPendingFriendListFromCurrentUser();
+
+    UserDto connect();
+
+    UserDto disconnect();
+
+    List<UserDto> getConnectedFriendListFromCurrentUser();
 }
