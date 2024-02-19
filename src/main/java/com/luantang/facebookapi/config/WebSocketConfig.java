@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws").setAllowedOriginPatterns("http://localhost:3001").withSockJS();
+        registry.addEndpoint("/ws").setAllowedOriginPatterns("https://facebook-clone-87933.web.app").withSockJS();
     }
 
     @Override
