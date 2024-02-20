@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -58,7 +59,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private UserEntity mapRegisterDtoToNewEntity(RegisterDto registerDto) {
         UserEntity userEntity = new UserEntity();
-        userEntity.setUserId(registerDto.getUserId());
+        userEntity.setUserId(UUID.randomUUID().toString());
         userEntity.setUserName(registerDto.getUserName());
         userEntity.setEmail(registerDto.getEmail());
         userEntity.setPassword(passwordEncoder.encode(registerDto.getPassword()));
