@@ -15,7 +15,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // Define CORS configuration as needed
-        config.addAllowedOrigin("http://localhost:3000");
+        config.addAllowedOrigin("https://luantang2102.github.io");
         config.addAllowedMethod("*"); // Allow all HTTP methods
         config.addAllowedHeader("*"); // Allow all headers
         config.setAllowCredentials(true);
